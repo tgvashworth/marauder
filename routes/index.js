@@ -8,7 +8,7 @@ exports.index = function(req, res){
 };
 exports.hello = function(req, res){
   if (typeof req.session.oauth_access_token === 'undefined') {
-    res.send("You are not logged in");
+    res.send("You are not logged in! Please log in.");
   } else {
     res.render('hello.ejs', { title: "hello world" });
   }
