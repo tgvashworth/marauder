@@ -59,8 +59,11 @@ app.get('/auth/twitter', function(req, res){
 });
 app.get('/', routes.index);
 app.get('/hello', routes.hello);
+app.get('/tweet', function(req, res) {
+  routes.tweet(oa, req, res);
+});
 
-app.get('/auth/twitter/callback', function(req, res, next){
+app.get('/auth/twitter/callback', function(req, res, next) {
   if (req.session.oauth) {
     req.session.oauth.verifier = req.query.oauth_verifier;
     var oauth = req.session.oauth;
