@@ -15,7 +15,7 @@ var oa = new OAuth(
   "tTdkYrzeXE0STqZUtk6sbw",
   "nHASgwcOCbdMNo21VluxFptsAmtqTZBoVGeKqUEQ",
   "1.0",
-  "http://localhost:3000/auth/twitter/callback",
+  "http://localhost:5000/auth/twitter/callback",
   "HMAC-SHA1"
 );
 
@@ -41,6 +41,14 @@ app.configure('production', function(){
 });
 
 // Routes
+
+app.get('/', routes.index);
+app.get('/hello', routes.hello);
+app.get('/tweet', function(req, res) {
+  // Pass oa to routes.tweet so that
+  // we can send stuff to the Twitter API
+  routes.tweet(oa, req, res);
+});
 app.get('/auth/twitter', function(req, res){
   oa.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results){
     if (error) {
@@ -50,19 +58,13 @@ app.get('/auth/twitter', function(req, res){
     else {
       req.session.oauth = {};
       req.session.oauth.token = oauth_token;
-      console.log('oauth.token: ' + req.session.oauth.token);
       req.session.oauth.token_secret = oauth_token_secret;
+      console.log('oauth.token: ' + req.session.oauth.token);
       console.log('oauth.token_secret: ' + req.session.oauth.token_secret);
       res.redirect('https://twitter.com/oauth/authenticate?oauth_token='+oauth_token);
   }
   });
 });
-app.get('/', routes.index);
-app.get('/hello', routes.hello);
-app.get('/tweet', function(req, res) {
-  routes.tweet(oa, req, res);
-});
-
 app.get('/auth/twitter/callback', function(req, res, next) {
   if (req.session.oauth) {
     req.session.oauth.verifier = req.query.oauth_verifier;
