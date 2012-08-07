@@ -2,9 +2,38 @@
  * Routes
  */
 
+// Serve the home page
+exports.index = function(req, res){
+  if (typeof req.session.oauth_access_token === 'undefined') {
+    res.render('index.ejs', { title: "Marauder's App" });
+  } else {
+    res.render('menu.ejs', { title: "Main menu" });
+  }
+};
+
+// Show a map for the requested hashtag
+exports.to = function(locations, req, res) {
+  var hashtag = '#' + req.params.hashtag;
+  if(req.params.hashtag && locations[hashtag]) {
+
+    console.log('Sending location data for hashtag', hashtag);
+    res.render('map.ejs', {hashtag: hashtag, title: 'To ' + hashtag});
+
+  } else {
+    res.redirect('/');
+  }
+};
+
 // Retrieve locations for the specified hastag (in the query string)
-exports.getlocation = function(req, res){
-  res.send('daves poo');
+exports.getlocation = function(locations, req, res){
+  var hashtag = '#' + req.params.hashtag;
+  console.log(req.params, hashtag, locations);
+  if(req.params.hashtag && locations[hashtag]) {
+    console.log('Sending location data for hashtag', hashtag);
+    res.send(JSON.stringify(locations[hashtag]));
+  } else {
+    res.send('Hashtag not found');
+  }
 };
 
 // POST a location with an associated hastag and store
@@ -20,23 +49,11 @@ exports.setlocation = function(locations, req, res){
   res.send(JSON.stringify(locations));
 };
 
-// Serve the home page
-exports.index = function(req, res){
-  res.render('index.ejs', { title: "Marauder's App" });
-};
-
-exports.hello = function(req, res){
-  if (typeof req.session.oauth_access_token === 'undefined') {
-    res.send("You are not logged in! Please log in.");
-  } else {
-    res.render('hello.ejs', { title: "hello world" });
-  }
-};
-
 // Send a tweet!
 exports.tweet = function(oa, req, res){
+  return;
   if (typeof req.session.oauth_access_token === 'undefined') {
-    res.send("You are not logged in! Please log in.");
+    res.redirect('/');
   } else {
 
     var body = {

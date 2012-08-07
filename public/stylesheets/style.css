@@ -3,6 +3,7 @@
   width: 320px;
   margin : 0 auto;
   overflow: hidden; 
+  padding-bottom: 10px;
 }
 #mapContainer {
   margin : 0 auto ;
@@ -14,7 +15,7 @@
 }
 
 #content {
-  padding: 10px; 
+  padding: 15px; 
 }
 #find {
  text-align: center; 
@@ -39,6 +40,7 @@ body {
 #toolbar {
   background-color : #000000 ;
   height : 55px ;
+  display: none;
 }
 #toolbar img{
   margin : 2px ;

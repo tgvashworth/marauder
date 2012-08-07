@@ -29,6 +29,21 @@ var oa = new OAuth(
 
 // Store the current hashtag locations
 var locations = {};
+
+locations['#YRS'] = {
+  target: {
+    lat: '52.4831056',
+    lng: '-1.8859758'
+  },
+  marauders: [{
+    lat: '52.4832',
+    lng: '-1.88598'
+  },
+  {
+    lat: '52.4833',
+    lng: '-1.8854'
+  }]
+};
  
 // Configuration
 
@@ -53,7 +68,7 @@ app.configure('production', function(){
 
 // Routes
 app.get('/', routes.index);
-app.get('/hello', routes.hello);
+
 app.get('/tweet', function(req, res) {
   // Pass oa to routes.tweet so that
   // we can send stuff to the Twitter API
@@ -89,7 +104,7 @@ app.get('/auth/twitter/callback', function(req, res, next) {
         req.session.oauth_access_token = oauth_access_token;
         req.session.oauth_access_token_secret = oauth_access_token_secret;
         console.log(results);
-        res.redirect('/hello');
+        res.redirect('/');
       }
     });
   } else {
@@ -100,7 +115,14 @@ app.get('/auth/twitter/callback', function(req, res, next) {
 app.post('/location', function (req, res) {
   routes.setlocation(locations, req, res);
 });
-app.get('/location', routes.getlocation);
+
+app.get('/location/:hashtag', function (req, res) {
+  routes.getlocation(locations, req, res);
+});
+
+app.get('/to/:hashtag', function (req, res) {
+  routes.to(locations, req, res);
+});
 
 
 app.listen(process.env.PORT);

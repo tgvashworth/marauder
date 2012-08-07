@@ -36,16 +36,39 @@ $.get('/location/YRS', function(data) {
         //   $('#output').text(data);
         // });
 
-        var pos = new google.maps.LatLng(position.coords.latitude,
-                                         position.coords.longitude);
+        var rawtag = '<%= hashtag %>'.slice(1);
 
-        var infowindow = new google.maps.InfoWindow({
-          map: map,
-          position: pos,
-          content: 'This is your location!'
+        $.get('/location/' + rawtag, function (data) {
+          data = JSON.parse(data);
+          console.log(data);
+
+          // var pos = new google.maps.LatLng(position.coords.latitude,
+          //                                position.coords.longitude);
+
+          var pos = new google.maps.LatLng(data.target.lat, data.target.lng);
+
+          var marker = new google.maps.Marker({
+            map: map,
+            position: pos
+          });
+
+          console.log(marker);
+
+          var blueIcon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png");
+
+          data.marauders.forEach(function (marauder) {
+            var marker = new google.maps.Marker({
+              map: map,
+              icon: blueIcon,
+              position: new google.maps.LatLng(parseInt(marauder.lat), parseInt(marauder.lng))
+            });
+            console.log(marker);
+          });
+
+          map.setCenter(pos);
+
         });
-
-        map.setCenter(pos);
+        
       }, function() {
         handleNoGeolocation(true);
       });

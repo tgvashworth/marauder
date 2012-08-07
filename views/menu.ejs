@@ -1,0 +1,22 @@
+<div id="content">
+  <h1><%= title %></h1>
+  <div id="search_container">
+    <input type="text" id="search">
+    <a href='#' id="do_search">Find</a>
+  </div>
+</div>
+
+<script>
+  
+  $('#do_search').click(function (ev) {
+    ev.preventDefault();
+
+    var hashtag = $('#search').val();
+
+    hashtag = hashtag.replace(/[^a-zA-Z0-9_]/g, '');
+
+    window.location.href = window.location.origin + '/to/' + hashtag;
+
+  });
+
+</script>
