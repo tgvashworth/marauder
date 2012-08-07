@@ -2,9 +2,9 @@
 /*
  * GET home page.
  */
-
-exports.index = function(req, res){
-  res.render('index.ejs', { title: "Marauder's App" });
+exports.location = function(req, res){
+  console.log(req.body);
+  res.send('YEAHHHHHHHH');
 };
 exports.hello = function(req, res){
   if (typeof req.session.oauth_access_token === 'undefined') {

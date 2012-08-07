@@ -41,7 +41,7 @@ app.configure('production', function(){
 });
 
 // Routes
-
+app.post('/location', routes.location);
 app.get('/', routes.index);
 app.get('/hello', routes.hello);
 app.get('/tweet', function(req, res) {
