@@ -41,7 +41,6 @@ app.configure('production', function(){
 });
 
 // Routes
-app.post('/location', routes.location);
 app.get('/', routes.index);
 app.get('/hello', routes.hello);
 app.get('/tweet', function(req, res) {
@@ -87,7 +86,7 @@ app.get('/auth/twitter/callback', function(req, res, next) {
   }
 });
 
-
+app.post('/location', routes.location);
 
 
 app.listen(process.env.PORT);
