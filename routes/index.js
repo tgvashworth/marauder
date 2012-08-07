@@ -1,21 +1,30 @@
-
-/*
- * GET home page.
+/**
+ * Routes
  */
+
+// Retrieve locations for the specified hastag (in the query string)
 exports.getlocation = function(req, res){
   res.send('daves poo');
 };
+
+// POST a location with an associated hastag and store
+// it in the locations object
 exports.setlocation = function(locations, req, res){
-  locations[req.body.hashtag] = {
-    lat: req.body.lat,
-    lng: req.body.lng
-  };
+  if (typeof locations[req.body.hashtag] === 'undefined') {
+    locations[req.body.hashtag] = {
+      lat: req.body.lat,
+      lng: req.body.lng
+    };
+  }
   console.log(locations);
   res.send(JSON.stringify(locations));
 };
+
+// Serve the home page
 exports.index = function(req, res){
   res.render('index.ejs', { title: "Marauder's App" });
 };
+
 exports.hello = function(req, res){
   if (typeof req.session.oauth_access_token === 'undefined') {
     res.send("You are not logged in! Please log in.");
@@ -23,6 +32,8 @@ exports.hello = function(req, res){
     res.render('hello.ejs', { title: "hello world" });
   }
 };
+
+// Send a tweet!
 exports.tweet = function(oa, req, res){
   if (typeof req.session.oauth_access_token === 'undefined') {
     res.send("You are not logged in! Please log in.");
