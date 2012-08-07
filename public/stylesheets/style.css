@@ -6,3 +6,8 @@ body {
 a {
   color: #00B7FF;
 }
+
+#map_canvas {
+width: 500px;
+height: 300px;
+}
