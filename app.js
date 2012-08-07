@@ -9,15 +9,7 @@ var express = require('express')
 var app = module.exports = express.createServer();
 var OAuth= require('oauth').OAuth;
 
-var oa = new OAuth(
-  "https://api.twitter.com/oauth/request_token",
-  "https://api.twitter.com/oauth/access_token",
-  "tTdkYrzeXE0STqZUtk6sbw",
-  "nHASgwcOCbdMNo21VluxFptsAmtqTZBoVGeKqUEQ",
-  "1.0",
-  "http://marauder.me/auth/twitter/callback",
-  "HMAC-SHA1"
-);
+var oa;
 
 // Configuration
 
@@ -34,10 +26,28 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  oa = new OAuth(
+    "https://api.twitter.com/oauth/request_token",
+    "https://api.twitter.com/oauth/access_token",
+    "tTdkYrzeXE0STqZUtk6sbw",
+    "nHASgwcOCbdMNo21VluxFptsAmtqTZBoVGeKqUEQ",
+    "1.0",
+    "http://localhost:"+process.env.PORT+"/auth/twitter/callback",
+    "HMAC-SHA1"
+  );
 });
 
 app.configure('production', function(){
   app.use(express.errorHandler());
+  oa = new OAuth(
+    "https://api.twitter.com/oauth/request_token",
+    "https://api.twitter.com/oauth/access_token",
+    "tTdkYrzeXE0STqZUtk6sbw",
+    "nHASgwcOCbdMNo21VluxFptsAmtqTZBoVGeKqUEQ",
+    "1.0",
+    "http://marauder.me/auth/twitter/callback",
+    "HMAC-SHA1"
+  );
 });
 
 // Routes
