@@ -2,9 +2,16 @@
 /*
  * GET home page.
  */
-exports.location = function(req, res){
-  console.log(req.body);
-  res.send(JSON.stringify(req.body));
+exports.getlocation = function(req, res){
+  res.send('daves poo');
+};
+exports.setlocation = function(locations, req, res){
+  locations[req.body.hashtag] = {
+    lat: req.body.lat,
+    lng: req.body.lng
+  };
+  console.log(locations);
+  res.send(JSON.stringify(locations));
 };
 exports.index = function(req, res){
   res.render('index.ejs', { title: "Marauder's App" });

@@ -4,6 +4,13 @@
 <div id="map_canvas"></div>
 <a href="/tweet">Click here</a>
 <div id="output"></div>
+<div id="output1"></div>
+<script>
+$.get('/location', function(data) {
+  $('#output1').text(data);
+});
+</script>
+
 
 <script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
 
@@ -22,7 +29,7 @@
     if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
         
-        $.post('/location', { lat: position.coords.latitude, lng: position.coords.longitude }, function(data) {
+        $.post('/location', { hashtag: '#YRS', lat: position.coords.latitude, lng: position.coords.longitude }, function(data) {
           $('#output').text(data);
         });
 

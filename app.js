@@ -18,15 +18,18 @@ if(process.env.LIVE === "1") {
 }
 
 var oa = new OAuth(
-    "https://api.twitter.com/oauth/request_token",
-    "https://api.twitter.com/oauth/access_token",
-    "tTdkYrzeXE0STqZUtk6sbw",
-    "nHASgwcOCbdMNo21VluxFptsAmtqTZBoVGeKqUEQ",
-    "1.0",
-    callback,
-    "HMAC-SHA1"
-  );
+  "https://api.twitter.com/oauth/request_token",
+  "https://api.twitter.com/oauth/access_token",
+  "tTdkYrzeXE0STqZUtk6sbw",
+  "nHASgwcOCbdMNo21VluxFptsAmtqTZBoVGeKqUEQ",
+  "1.0",
+  callback,
+  "HMAC-SHA1"
+);
 
+// Store the current hashtag locations
+var locations = {};
+ 
 // Configuration
 
 app.configure(function(){
@@ -94,7 +97,10 @@ app.get('/auth/twitter/callback', function(req, res, next) {
   }
 });
 
-app.post('/location', routes.location);
+app.post('/location', function (req, res) {
+  routes.setlocation(locations, req, res);
+});
+app.get('/location', routes.getlocation);
 
 
 app.listen(process.env.PORT);
