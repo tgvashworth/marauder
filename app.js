@@ -15,7 +15,7 @@ var oa = new OAuth(
   "tTdkYrzeXE0STqZUtk6sbw",
   "nHASgwcOCbdMNo21VluxFptsAmtqTZBoVGeKqUEQ",
   "1.0",
-  "http://localhost:5000/auth/twitter/callback",
+  "http://marauder.me/auth/twitter/callback",
   "HMAC-SHA1"
 );
 
