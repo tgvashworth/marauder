@@ -1,11 +1,58 @@
 <h1><%= title %></h1>
 <p><%= title %></p>
+<div id="map_canvas"></div>
 <a href="/tweet">Click here</a>
-<iframe width="425" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/?ie=UTF8&amp;ll=37.0625,-95.677068&amp;spn=40.188298,69.873047&amp;t=m&amp;z=4&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/?ie=UTF8&amp;ll=37.0625,-95.677068&amp;spn=40.188298,69.873047&amp;t=m&amp;z=4&amp;source=embed" style="color:#0000FF;text-align:left">View Larger Map</a></small>
-<script>
-navigator.geolocation.getCurrentPosition(function (position) {
-  console.log(position);
-}, function (err) {
-  console.log(err)
-});
-</script>
+<script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+
+    <script>
+      var map;
+
+      function initialize() {
+        var mapOptions = {
+          zoom: 6,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById('map_canvas'),
+            mapOptions);
+
+        // Try HTML5 geolocation
+        if(navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = new google.maps.LatLng(position.coords.latitude,
+                                             position.coords.longitude);
+
+            var infowindow = new google.maps.InfoWindow({
+              map: map,
+              position: pos,
+              content: 'This is your location!'
+            });
+
+            map.setCenter(pos);
+          }, function() {
+            handleNoGeolocation(true);
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleNoGeolocation(false);
+        }
+      }
+
+      function handleNoGeolocation(errorFlag) {
+        if (errorFlag) {
+          var content = 'Error: The Geolocation service failed.';
+        } else {
+          var content = 'Error: Your browser doesn\'t support geolocation.';
+        }
+
+        var options = {
+          map: map,
+          position: new google.maps.LatLng(60, 105),
+          content: content
+        };
+
+        var infowindow = new google.maps.InfoWindow(options);
+        map.setCenter(options.position);
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
