@@ -1,3 +1,10 @@
 <h1><%= title %></h1>
 <p><%= title %></p>
 <a href="/tweet">Click here</a>
+<script>
+navigator.geolocation.getCurrentPosition(function (position) {
+  console.log(position);
+}, function (err) {
+  console.log(err)
+});
+</script>
