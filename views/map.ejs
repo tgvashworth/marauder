@@ -75,7 +75,7 @@
       // Initialisation stuff
       if( ! initialised ) {
 
-        map = L.map('map_canvas').setView([data.target.lat, data.target.lng], 19);
+        map = L.map('map_canvas').setView([data.target.lat, data.target.lng], 18);
         var layer = new L.StamenTileLayer("toner");
         map.addLayer(layer);
 
@@ -100,12 +100,22 @@
 
           // This marauder already exists, just move the icon
           marauder = marauders[server_marauder.id];
-          marauder.lat = server_marauder.lat;
-          marauder.lng = server_marauder.lng;
 
-          if(marauder.lat - server_marauder.lat < 0.000015) {
-            marauder.marker.setLatLng([parseFloat(marauder.lat), parseFloat(marauder.lng)]);
-          }
+
+          var a = server_marauder.lat - marauder.lat;
+          var o = server_marauder.lng - marauder.lng;
+
+          var d = Math.atan(o/a);
+          var j = 0.000001;
+          var p = j*Math.cos(d);
+          var b = j*Math.sin(d);
+          marauder.lat = marauder.lat + p;
+          marauder.lng = marauder.lng +b;
+
+          // if(Math.abs(marauder.lat - server_marauder.lat) < 0.000015 ||
+          //       Math.abs(marauder.lng - server_marauder.lng) < 0.000015) {
+          //   marauder.marker.setLatLng([parseFloat(marauder.lat), parseFloat(marauder.lng)]);
+          // }
 
         } else {
 
