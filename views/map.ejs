@@ -49,6 +49,8 @@ $.get('/location/YRS', function(data) {
           lng: ''+position.coords.longitude
         }
 
+        console.log("ME!", position.coords.latitude, position.coords.longitude);
+
         // Send my location to the server, then add all points to the map
         $.post('/location', my_data, function(response) {
           
@@ -81,7 +83,7 @@ $.get('/location/YRS', function(data) {
           map: map,
           position: pos
         });
-        
+
         map.setCenter(pos);
         initialised = true;
       }
@@ -95,10 +97,8 @@ $.get('/location/YRS', function(data) {
         marauder.marker = new google.maps.Marker({
           map: map,
           icon: blue_icon,
-          position: new google.maps.LatLng(parseInt(marauder.lat), parseInt(marauder.lng))
+          position: new google.maps.LatLng(parseFloat(marauder.lat), parseFloat(marauder.lng))
         });
-
-        console.log(marauder, my_data);
 
         // Make my icon green
         if(marauder.lat === my_data.lat && marauder.lng === my_data.lng) {
