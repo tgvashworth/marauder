@@ -73,15 +73,15 @@ $.get('/location/YRS', function(data) {
 
       data = JSON.parse(data);
 
-      // Set up the target marker
-      var pos = new google.maps.LatLng(data.target.lat, data.target.lng);
-
-      var target = new google.maps.Marker({
-        map: map,
-        position: pos
-      });
-
       if( ! initialised ) {
+        // Set up the target marker
+        var pos = new google.maps.LatLng(data.target.lat, data.target.lng);
+
+        var target = new google.maps.Marker({
+          map: map,
+          position: pos
+        });
+        
         map.setCenter(pos);
         initialised = true;
       }
