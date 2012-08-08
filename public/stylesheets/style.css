@@ -26,7 +26,7 @@ body {
 
 #map_canvas {
   width: 320px;
-  height: 480px;
+  height: 320px;
 }
 .leaflet-control-attribution {
   display: none;
