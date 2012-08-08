@@ -1,18 +1,4 @@
-<div id="content">
-<h1><%= title %></h1>
-<p><%= title %></p>
-</div>
-
 <div id="map_canvas"></div>
-<a href="/tweet">Click here</a>
-<div id="output"></div>
-<div id="output1"></div>
-<script>
-$.get('/location/YRS', function(data) {
-  $('#output1').text(data);
-});
-</script>
-
 
 <script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
 
