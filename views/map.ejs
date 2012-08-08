@@ -49,8 +49,6 @@ $.get('/location/YRS', function(data) {
           lng: ''+position.coords.longitude
         }
 
-        console.log("ME!", position.coords.latitude, position.coords.longitude);
-
         // Send my location to the server, then add all points to the map
         $.post('/location', my_data, function(response) {
           
@@ -58,8 +56,8 @@ $.get('/location/YRS', function(data) {
 
           getOtherMarauders('<%= hashtag %>', my_data);
           
-          // Trigger another update in 5 seconds
-          setTimeout(updateLocation, 1000 * 5);
+          // Trigger another update in 2.5 seconds
+          setTimeout(updateLocation, 1000 * 2.5);
         });
 
       }, function() {
@@ -105,12 +103,15 @@ $.get('/location/YRS', function(data) {
           marauder = marauders[server_marauder.id];
           marauder.lat = server_marauder.lat;
           marauder.lng = server_marauder.lng;
-          marauder.marker.setPosition(
-            new google.maps.LatLng(
-              parseFloat(marauder.lat),
-              parseFloat(marauder.lng)
-            )
-          );
+
+          if(marauder.lat - server_marauder.lat < 0.000015) {
+            marauder.marker.setPosition(
+              new google.maps.LatLng(
+                parseFloat(marauder.lat),
+                parseFloat(marauder.lng)
+              )
+            );
+          }
 
         } else {
 
