@@ -106,7 +106,7 @@
           var o = server_marauder.lng - marauder.lng;
 
           var d = Math.atan(o/a);
-          var j = 0.000001;
+          var j = 0.000005;
           var p = j*Math.cos(d);
           var b = j*Math.sin(d);
           marauder.lat = marauder.lat + p;
