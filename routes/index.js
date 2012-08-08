@@ -13,6 +13,9 @@ exports.index = function(req, res){
 
 // Show a map for the requested hashtag
 exports.to = function(locations, req, res) {
+  // For now, kick out people who don't have an access token
+  if (typeof req.session.oauth_access_token === 'undefined') res.redirect('/');
+
   var hashtag = '#' + req.params.hashtag;
   if(req.params.hashtag && locations[hashtag]) {
     console.log('Sending location data for hashtag', hashtag);

@@ -17,7 +17,7 @@ $.get('/location/YRS', function(data) {
 <script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
 
 <script>
-  var map;
+  var map, initialised = false;
 
   // Initialise the map, geolocation and get other marauders from the db
   $(function () {
@@ -81,7 +81,10 @@ $.get('/location/YRS', function(data) {
         position: pos
       });
 
-      map.setCenter(pos);
+      if( ! initialised ) {
+        map.setCenter(pos);
+        initialised = true;
+      }
 
       // Add markers for each of the other Marauders
       var blue_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png");

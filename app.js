@@ -35,10 +35,7 @@ locations['#YRS'] = {
     lat: '52.4831056',
     lng: '-1.8859758'
   },
-  marauders: [{
-    lat: '51',
-    lng: '-2'
-  }]
+  marauders: []
 };
  
 // Configuration
