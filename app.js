@@ -96,7 +96,8 @@ app.get('/auth/twitter/callback', function(req, res, next) {
       } else {
         req.session.oauth_access_token = oauth_access_token;
         req.session.oauth_access_token_secret = oauth_access_token_secret;
-        console.log(results);
+        req.session.user_name = results.screen_name;
+        req.session.user_id = results.user_id;
         res.redirect('/');
       }
     });

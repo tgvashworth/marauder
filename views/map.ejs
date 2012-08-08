@@ -86,7 +86,8 @@ $.get('/location/YRS', function(data) {
 
         var target = new google.maps.Marker({
           map: map,
-          position: pos
+          position: pos,
+          flat: true
         });
 
         map.setCenter(pos);
@@ -114,12 +115,22 @@ $.get('/location/YRS', function(data) {
         } else {
 
           // This is a new marauder, add it to the map
+
+          // Create an icon with their profile url
+          var image_url = "https://api.twitter.com/1/users/profile_image?screen_name=" + server_marauder.user_name + "&size=mini"
+          console.log(image_url);
+          var image_icon = new google.maps.MarkerImage(
+            image_url,
+            new google.maps.Size(24,24)
+          );
+          
           marauder = {
             lat: server_marauder.lat,
             lng: server_marauder.lng,
             marker: new google.maps.Marker({
               map: map,
-              icon: blue_icon,
+              icon: image_icon,
+              flat: true,
               position: new google.maps.LatLng(
                 parseFloat(server_marauder.lat),
                 parseFloat(server_marauder.lng)
@@ -128,9 +139,9 @@ $.get('/location/YRS', function(data) {
           };
 
           // Make my icon green
-          if(server_marauder.lat === my_data.lat && server_marauder.lng === my_data.lng) {
-            marauder.marker.icon = green_icon;
-          }
+          // if(server_marauder.lat === my_data.lat && server_marauder.lng === my_data.lng) {
+          //   marauder.marker.icon = green_icon;
+          // }
 
           marauders[server_marauder.id] = marauder;
 

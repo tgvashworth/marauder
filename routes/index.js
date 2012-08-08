@@ -7,7 +7,7 @@ exports.index = function(req, res){
   if (typeof req.session.oauth_access_token === 'undefined') {
     res.render('index.ejs', { title: "Marauder's App" });
   } else {
-    res.render('menu.ejs', { title: "Main menu" });
+    res.render('menu.ejs', { title: "Main menu", user_name: req.session.user_name });
   }
 };
 
@@ -64,6 +64,7 @@ exports.setlocation = function(locations, req, res){
       // and id, based on the access token, so we can retrieve them again
       locations[req.body.hashtag].marauders.push({
         id: req.session.oauth_access_token.slice(0,9),
+        user_name: req.session.user_name,
         lat: req.body.lat,
         lng: req.body.lng
       });
