@@ -15,7 +15,7 @@
 
     hashtag = hashtag.replace(/[^a-zA-Z0-9_]/g, '');
 
-    window.location.href = window.location.origin + '/to/' + hashtag;
+    window.location.href = window.location.protocol + '//' + window.location.host + '/to/' + hashtag;
 
   });
 

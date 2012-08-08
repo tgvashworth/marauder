@@ -17,7 +17,7 @@ $.get('/location/YRS', function(data) {
 <script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
 
 <script>
-  var map, initialised = false;
+  var map, marauders = {}, initialised = false;
 
   // Initialise the map, geolocation and get other marauders from the db
   $(function () {
@@ -74,7 +74,12 @@ $.get('/location/YRS', function(data) {
     $.get('/location/' + rawtag, function (data) {
 
       data = JSON.parse(data);
+      
+      // Add markers for each of the other Marauders
+      var blue_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png");
+      var green_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png");
 
+      // Initialisation stuff
       if( ! initialised ) {
         // Set up the target marker
         var pos = new google.maps.LatLng(data.target.lat, data.target.lng);
@@ -86,23 +91,49 @@ $.get('/location/YRS', function(data) {
 
         map.setCenter(pos);
         initialised = true;
+
       }
 
-      // Add markers for each of the other Marauders
-      var blue_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png");
-      var green_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png");
+      data.marauders.forEach(function (server_marauder) {
 
-      data.marauders.forEach(function (marauder) {
+        var marauder;
 
-        marauder.marker = new google.maps.Marker({
-          map: map,
-          icon: blue_icon,
-          position: new google.maps.LatLng(parseFloat(marauder.lat), parseFloat(marauder.lng))
-        });
+        if(marauders[server_marauder.id] !== undefined) {
 
-        // Make my icon green
-        if(marauder.lat === my_data.lat && marauder.lng === my_data.lng) {
-          marauder.marker.icon = green_icon;
+          // This marauder already exists, just move the icon
+          marauder = marauders[server_marauder.id];
+          marauder.lat = server_marauder.lat;
+          marauder.lng = server_marauder.lng;
+          marauder.marker.setPosition(
+            new google.maps.LatLng(
+              parseFloat(marauder.lat),
+              parseFloat(marauder.lng)
+            )
+          );
+
+        } else {
+
+          // This is a new marauder, add it to the map
+          marauder = {
+            lat: server_marauder.lat,
+            lng: server_marauder.lng,
+            marker: new google.maps.Marker({
+              map: map,
+              icon: blue_icon,
+              position: new google.maps.LatLng(
+                parseFloat(server_marauder.lat),
+                parseFloat(server_marauder.lng)
+              )
+            })
+          };
+
+          // Make my icon green
+          if(server_marauder.lat === my_data.lat && server_marauder.lng === my_data.lng) {
+            marauder.marker.icon = green_icon;
+          }
+
+          marauders[server_marauder.id] = marauder;
+
         }
         
       });
