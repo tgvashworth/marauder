@@ -14,12 +14,14 @@ exports.index = function(req, res){
 // Show a map for the requested hashtag
 exports.to = function(locations, req, res) {
   // For now, kick out people who don't have an access token
-  if (typeof req.session.oauth_access_token === 'undefined') res.redirect('/');
+  if (typeof req.session.oauth_access_token === 'undefined') { res.redirect('/'); return; }
 
   var hashtag = '#' + req.params.hashtag;
   if(req.params.hashtag && locations[hashtag]) {
-    console.log('Sending location data for hashtag', hashtag);
-    res.render('map.ejs', {hashtag: hashtag, title: 'To ' + hashtag});
+    res.render('map.ejs', {
+      hashtag: hashtag,
+      title: 'To ' + hashtag
+    });
   } else {
     res.redirect('/');
   }
@@ -28,9 +30,7 @@ exports.to = function(locations, req, res) {
 // Retrieve locations for the specified hastag (in the query string)
 exports.getlocation = function(locations, req, res){
   var hashtag = '#' + req.params.hashtag;
-  console.log(req.params, hashtag, locations);
   if(req.params.hashtag && locations[hashtag]) {
-    console.log('Sending location data for hashtag', hashtag);
     res.send(JSON.stringify(locations[hashtag]));
   } else {
     res.send('Hashtag not found');
@@ -42,7 +42,7 @@ exports.getlocation = function(locations, req, res){
 exports.setlocation = function(locations, req, res){
   
   // For now, kick out people who don't have an access token
-  if (typeof req.session.oauth_access_token === 'undefined') res.redirect('/');
+  if (typeof req.session.oauth_access_token === 'undefined') { res.redirect('/'); return; }
 
   // Send a 400 (Bad Request) if they haven't sent the required params
   if(!(req.body.hashtag && req.body.lat && req.body.lng)) {
@@ -72,16 +72,15 @@ exports.setlocation = function(locations, req, res){
       // console.log(locations);
     } else {
       // We've already seen this user, so update their info
-      locations[req.body.hashtag].marauders.forEach(function (marauder) {
+      locations[req.body.hashtag].marauders.forEach(function (marauder, index, marauders) {
         if(marauder.id === req.session.location_id) {
-          marauder.lat = req.body.lat;
-          marauder.lng = req.body.lng;
-          return false;
+          marauders[index].lat = req.body.lat;
+          marauders[index].lng = req.body.lng;
         }
       });
     }
   }
-  res.send(JSON.stringify(req.body));
+  res.send(200);
 };
 
 // Send a tweet!
