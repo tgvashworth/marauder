@@ -15,10 +15,8 @@ exports.index = function(req, res){
 exports.to = function(locations, req, res) {
   var hashtag = '#' + req.params.hashtag;
   if(req.params.hashtag && locations[hashtag]) {
-
     console.log('Sending location data for hashtag', hashtag);
     res.render('map.ejs', {hashtag: hashtag, title: 'To ' + hashtag});
-
   } else {
     res.redirect('/');
   }
@@ -36,17 +34,51 @@ exports.getlocation = function(locations, req, res){
   }
 };
 
-// POST a location with an associated hastag and store
+// POST a location with an associated hashtag and store
 // it in the locations object
 exports.setlocation = function(locations, req, res){
-  if (typeof locations[req.body.hashtag] === 'undefined') {
-    locations[req.body.hashtag] = {
-      lat: req.body.lat,
-      lng: req.body.lng
-    };
+  
+  // For now, kick out people who don't have an access token
+  if (typeof req.session.oauth_access_token === 'undefined') res.redirect('/');
+
+  // Send a 400 (Bad Request) if they haven't sent the required params
+  if(!(req.body.hashtag && req.body.lat && req.body.lng)) {
+    res.send(400);
+    return;
   }
-  console.log(locations);
-  res.send(JSON.stringify(locations));
+
+  // Check if this hashtag exists
+  if (typeof locations[req.body.hashtag] === 'undefined') {
+    // We haven't seen this hashtag before. Shouldn't really ever happen
+    locations[req.body.hashtag] = {
+      target: {},
+      marauders: []
+    };
+  } else {
+    // Does the current user have a location_id stored?
+    if(req.session.location_id === undefined) {
+      // Add the new user to our list of marauders and store
+      // and id, based on the access token, so we can retrieve them again
+      locations[req.body.hashtag].marauders.push({
+        id: req.session.oauth_access_token.slice(0,9),
+        lat: req.body.lat,
+        lng: req.body.lng
+      });
+      req.session.location_id = req.session.oauth_access_token.slice(0,9);
+      // console.log("Recieved new location data from device.");
+      // console.log(locations);
+    } else {
+      // We've already seen this user, so update their info
+      locations[req.body.hashtag].marauders.forEach(function (marauder) {
+        if(marauder.id === req.session.location_id) {
+          marauder.lat = req.body.lat;
+          marauder.lng = req.body.lng;
+          return false;
+        }
+      });
+    }
+  }
+  res.send(JSON.stringify(req.body));
 };
 
 // Send a tweet!

@@ -19,7 +19,8 @@ $.get('/location/YRS', function(data) {
 <script>
   var map;
 
-  function initialize() {
+  // Initialise the map, geolocation and get other marauders from the db
+  $(function () {
     var mapOptions = {
       zoom: 6,
       streetViewControl: false,
@@ -30,52 +31,81 @@ $.get('/location/YRS', function(data) {
 
     // Try HTML5 geolocation
     if(navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        
-        // $.post('/location', { hashtag: '#YRS', lat: position.coords.latitude, lng: position.coords.longitude }, function(data) {
-        //   $('#output').text(data);
-        // });
-
-        var rawtag = '<%= hashtag %>'.slice(1);
-
-        $.get('/location/' + rawtag, function (data) {
-          data = JSON.parse(data);
-          console.log(data);
-
-          // var pos = new google.maps.LatLng(position.coords.latitude,
-          //                                position.coords.longitude);
-
-          var pos = new google.maps.LatLng(data.target.lat, data.target.lng);
-
-          var marker = new google.maps.Marker({
-            map: map,
-            position: pos
-          });
-
-          console.log(marker);
-
-          var blueIcon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png");
-
-          data.marauders.forEach(function (marauder) {
-            var marker = new google.maps.Marker({
-              map: map,
-              icon: blueIcon,
-              position: new google.maps.LatLng(parseInt(marauder.lat), parseInt(marauder.lng))
-            });
-            console.log(marker);
-          });
-
-          map.setCenter(pos);
-
-        });
-        
-      }, function() {
-        handleNoGeolocation(true);
-      });
+      // Send our location to the server
+      updateLocation();
     } else {
       // Browser doesn't support Geolocation
       handleNoGeolocation(false);
     }
+  });
+
+  function updateLocation() {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        
+        // Build and object of my data
+        var my_data = {
+          hashtag: '<%= hashtag %>',
+          lat: ''+position.coords.latitude,
+          lng: ''+position.coords.longitude
+        }
+
+        // Send my location to the server, then add all points to the map
+        $.post('/location', my_data, function(response) {
+          
+          console.log(response);
+
+          getOtherMarauders('<%= hashtag %>', my_data);
+          
+          // Trigger another update in 5 seconds
+          setTimeout(updateLocation, 1000 * 5);
+        });
+
+      }, function() {
+        handleNoGeolocation(true);
+      });
+  }
+
+  function getOtherMarauders(hashtag, my_data) {
+
+    var rawtag = '<%= hashtag %>'.slice(1);
+
+    $.get('/location/' + rawtag, function (data) {
+
+      data = JSON.parse(data);
+
+      // Set up the target marker
+      var pos = new google.maps.LatLng(data.target.lat, data.target.lng);
+
+      var target = new google.maps.Marker({
+        map: map,
+        position: pos
+      });
+
+      map.setCenter(pos);
+
+      // Add markers for each of the other Marauders
+      var blue_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png");
+      var green_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png");
+
+      data.marauders.forEach(function (marauder) {
+
+        marauder.marker = new google.maps.Marker({
+          map: map,
+          icon: blue_icon,
+          position: new google.maps.LatLng(parseInt(marauder.lat), parseInt(marauder.lng))
+        });
+
+        console.log(marauder, my_data);
+
+        // Make my icon green
+        if(marauder.lat === my_data.lat && marauder.lng === my_data.lng) {
+          marauder.marker.icon = green_icon;
+        }
+        
+      });
+
+    });
+
   }
 
   function handleNoGeolocation(errorFlag) {
@@ -95,5 +125,4 @@ $.get('/location/YRS', function(data) {
     map.setCenter(options.position);
   }
 
-  google.maps.event.addDomListener(window, 'load', initialize);
 </script>
