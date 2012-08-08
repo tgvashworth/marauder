@@ -7,7 +7,7 @@
 <script>
   
   (function check() {
-    if( $('#speech').val() == 'I solemnly swear I am up to no good' ) {
+    if( $('#speech').val().match(/I solemnly swear I am up to no good/i) ) {
       document.location.href = window.location.protocol + '//' + window.location.host + '/auth/twitter';
     } else {
       setTimeout(check, 200);

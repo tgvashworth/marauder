@@ -7,7 +7,7 @@
 <script>
   
   (function check() {
-    if( $('#speech').val() == 'mischief managed' ) {
+    if( $('#speech').val().match(/mischief managed/i) ) {
       document.location.href = window.location.protocol + '//' + window.location.host + '/auth/logout';
     } else {
       setTimeout(check, 200);
