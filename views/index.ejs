@@ -1,4 +1,17 @@
 <div id="content">
-  <p>Welcome to <%= title %></p>
-  <a href="/auth/twitter">Login with Twitter</a>
+  <div id="speech_wrapper">
+    <input id="speech" type="text" x-webkit-speech />
+  </div>
 </div>
+
+<script>
+  
+  (function check() {
+    if( $('#speech').val() == 'I solemnly swear I am up to no good' ) {
+      document.location.href = window.location.protocol + '//' + window.location.host + '/auth/twitter';
+    } else {
+      setTimeout(check, 200);
+    }
+  }());
+  
+</script>

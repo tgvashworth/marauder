@@ -1,20 +1,31 @@
 <div id="map_canvas"></div>
 
-<script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+<div id="speech_wrapper">
+  <input id="speech" type="text" x-webkit-speech />
+</div>
+
+<script>
+  
+  (function check() {
+    if( $('#speech').val() == 'mischief managed' ) {
+      document.location.href = window.location.protocol + '//' + window.location.host + '/auth/logout';
+    } else {
+      setTimeout(check, 200);
+    }
+  }());
+  
+</script>
+
+<!-- <script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script> -->
+
+<script src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.js"></script>
+<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.1.2"></script>
 
 <script>
   var map, marauders = {}, initialised = false;
 
   // Initialise the map, geolocation and get other marauders from the db
   $(function () {
-    var mapOptions = {
-      zoom: 6,
-      streetViewControl: false,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById('map_canvas'),
-        mapOptions);
-
     // Try HTML5 geolocation
     if(navigator.geolocation) {
       // Send our location to the server
@@ -37,8 +48,6 @@
 
         // Send my location to the server, then add all points to the map
         $.post('/location', my_data, function(response) {
-          
-          console.log(response);
 
           getOtherMarauders('<%= hashtag %>', my_data);
           
@@ -59,22 +68,26 @@
 
       data = JSON.parse(data);
       
-      // Add markers for each of the other Marauders
-      var blue_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png");
-      var green_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png");
+      // // Add markers for each of the other Marauders
+      // var blue_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png");
+      // var green_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png");
 
       // Initialisation stuff
       if( ! initialised ) {
-        // Set up the target marker
-        var pos = new google.maps.LatLng(data.target.lat, data.target.lng);
 
-        var target = new google.maps.Marker({
-          map: map,
-          position: pos,
-          flat: true
-        });
+        map = L.map('map_canvas').setView([data.target.lat, data.target.lng], 19);
+        var layer = new L.StamenTileLayer("toner");
+        map.addLayer(layer);
 
-        map.setCenter(pos);
+        var target = L.marker(
+          [data.target.lat, data.target.lng],
+          {
+            title: '#' + rawtag
+          }
+        ).addTo(map);
+
+        target.bindPopup("#"+rawtag).openPopup();
+
         initialised = true;
 
       }
@@ -91,12 +104,7 @@
           marauder.lng = server_marauder.lng;
 
           if(marauder.lat - server_marauder.lat < 0.000015) {
-            marauder.marker.setPosition(
-              new google.maps.LatLng(
-                parseFloat(marauder.lat),
-                parseFloat(marauder.lng)
-              )
-            );
+            marauder.marker.setLatLng([parseFloat(marauder.lat), parseFloat(marauder.lng)]);
           }
 
         } else {
@@ -104,31 +112,28 @@
           // This is a new marauder, add it to the map
 
           // Create an icon with their profile url
-          var image_url = "https://api.twitter.com/1/users/profile_image?screen_name=" + server_marauder.user_name + "&size=mini"
+          var image_url = "https://api.twitter.com/1/users/profile_image?screen_name=" + server_marauder.user_name + "&size=normal"
           console.log(image_url);
-          var image_icon = new google.maps.MarkerImage(
-            image_url,
-            new google.maps.Size(24,24)
-          );
+          var image_icon = L.icon({
+            iconUrl: image_url,
+            iconSize: [24, 24]
+          });
           
           marauder = {
+            user_name: server_marauder.user_name,
             lat: server_marauder.lat,
             lng: server_marauder.lng,
-            marker: new google.maps.Marker({
-              map: map,
-              icon: image_icon,
-              flat: true,
-              position: new google.maps.LatLng(
-                parseFloat(server_marauder.lat),
-                parseFloat(server_marauder.lng)
-              )
-            })
+            marker: L.marker(
+              [parseFloat(server_marauder.lat), parseFloat(server_marauder.lng)],
+              { icon: image_icon }
+            )
           };
 
-          // Make my icon green
-          // if(server_marauder.lat === my_data.lat && server_marauder.lng === my_data.lng) {
-          //   marauder.marker.icon = green_icon;
-          // }
+          marauder.marker.addTo(map);
+
+          marauder.marker.bindPopup(
+            marauder.user_name
+          );
 
           marauders[server_marauder.id] = marauder;
 
@@ -141,20 +146,6 @@
   }
 
   function handleNoGeolocation(errorFlag) {
-    if (errorFlag) {
-      var content = 'Error: The Geolocation service failed.';
-    } else {
-      var content = 'Error: Your browser doesn\'t support geolocation.';
-    }
-
-    var options = {
-      map: map,
-      position: new google.maps.LatLng(60, 105),
-      content: content
-    };
-
-    var infowindow = new google.maps.InfoWindow(options);
-    map.setCenter(options.position);
   }
 
 </script>

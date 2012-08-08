@@ -106,6 +106,11 @@ app.get('/auth/twitter/callback', function(req, res, next) {
   }
 });
 
+app.get('/auth/logout', function (req, res) {
+  req.session.destroy();
+  res.redirect('/');
+});
+
 app.post('/location', function (req, res) {
   routes.setlocation(locations, req, res);
 });
