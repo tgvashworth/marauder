@@ -133,10 +133,6 @@ app.get('/location/:hashtag', function (req, res) {
   routes.getlocation(locations, req, res);
 });
 
-app.get('/from/:hashtag', function (req, res) {
-  routes.to(locations, req, res);
-});
-
 app.get('/to/:hashtag', function (req, res) {
   routes.to(locations, req, res);
 });

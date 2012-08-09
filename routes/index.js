@@ -20,21 +20,6 @@ exports.newhashtag = function(req, res){
 };
 // Show a map for the requested hashtag
 
-exports.from = function(locations, req, res){
-  if (typeof req.session.oauth_access_token === 'undefined') { res.redirect('/'); return; }
-
-  var hashtag = '#' + req.params.hashtag;
-  if(req.params.hashtag && locations[hashtag]) {
-    res.render('map.ejs', {
-      hashtag: hashtag,
-      title: 'From ' + hashtag,
-      is_from: true
-    });
-  } else {
-    res.redirect('/');
-  }
-};
-
 exports.to = function(locations, req, res) {
   // For now, kick out people who don't have an access token
   if (typeof req.session.oauth_access_token === 'undefined') { res.redirect('/'); return; }
@@ -43,8 +28,7 @@ exports.to = function(locations, req, res) {
   if(req.params.hashtag && locations[hashtag]) {
     res.render('map.ejs', {
       hashtag: hashtag,
-      title: 'To ' + hashtag,
-      is_from: false
+      title: 'To ' + hashtag
     });
   } else {
     res.redirect('/');
@@ -95,7 +79,7 @@ exports.setlocation = function(locations, req, res){
     };
 
     // Send them to a event page
-    res.redirect('/from/'+rawhash);
+    res.redirect('/to/'+rawhash);
   } else {
     // Does the current user have a location_id stored?
     if(req.session.location_id === undefined) {
