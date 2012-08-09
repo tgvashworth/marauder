@@ -31,7 +31,7 @@
     if(navigator.geolocation) {
       // Send our location to the server and update all the other
       // markers with data from other users
-      updateLocation(<%= is_from %>); updateLocation(true)
+      updateLocation();
     } else {
       // Browser doesn't support Geolocation
     }
