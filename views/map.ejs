@@ -24,15 +24,16 @@
 <script>
   var map, marauders = {}, initialised = false;
 
-  // Initialise the map, geolocation and get other marauders from the db
+  // Initialise the map, geolocation and get other marauders from the db,
+  // only when the page is ready
   $(function () {
     // Try HTML5 geolocation
     if(navigator.geolocation) {
-      // Send our location to the server
+      // Send our location to the server and update all the other
+      // markers with data from other users
       updateLocation();
     } else {
       // Browser doesn't support Geolocation
-      handleNoGeolocation(false);
     }
   });
 
@@ -46,9 +47,10 @@
           lng: ''+position.coords.longitude
         }
 
-        // Send my location to the server, then add all points to the map
+        // Send my location to the server, then add/update all points to the map
         $.post('/location', my_data, function(response) {
 
+          // Grab the other marauders' data for adding/updating on the map
           getOtherMarauders('<%= hashtag %>', my_data);
           
           // Trigger another update in 2.5 seconds
@@ -56,7 +58,7 @@
         });
 
       }, function() {
-        handleNoGeolocation(true);
+        // Geo failed
       });
   }
 
@@ -64,8 +66,10 @@
 
     var rawtag = '<%= hashtag %>'.slice(1);
 
+    // Get all the data for the currect hashtag
     $.get('/location/' + rawtag, function (data) {
 
+      // Turn data in to a usable Javascript object
       data = JSON.parse(data);
       
       // // Add markers for each of the other Marauders
@@ -75,19 +79,22 @@
       // Initialisation stuff
       if( ! initialised ) {
 
+        // Set up the map
         map = L.map('map_canvas').setView([data.target.lat, data.target.lng], 18);
+        // Using the stamen toner layer
         var layer = new L.StamenTileLayer("toner");
         map.addLayer(layer);
 
+        // Create a marker for the target location
         var target = L.marker(
           [data.target.lat, data.target.lng],
-          {
-            title: '#' + rawtag
-          }
+          { title: '#' + rawtag }
         ).addTo(map);
 
+        // And bind a popup to it with the current hashtag
         target.bindPopup("#"+rawtag).openPopup();
 
+        // Don't perform this again
         initialised = true;
 
       }
@@ -101,21 +108,37 @@
           // This marauder already exists, just move the icon
           marauder = marauders[server_marauder.id];
 
+          server_marauder.lat = parseFloat(server_marauder.lat);
+          server_marauder.lng = parseFloat(server_marauder.lng);
 
+          // Work out the difference between the latitude we are at
+          // and the the longitude we want to get to (Angela & Oliver)
           var a = server_marauder.lat - marauder.lat;
           var o = server_marauder.lng - marauder.lng;
 
-          var d = Math.atan(o/a);
-          var j = 0.000005;
-          var p = j*Math.cos(d);
-          var b = j*Math.sin(d);
-          marauder.lat = marauder.lat + p;
-          marauder.lng = marauder.lng +b;
+          // Find the angle to the target point (Dave)
+          var d = Math.atan2(o, a) || 0;
+          // And set the size of the step we will take in that direction (Juan)
+          var j = 0.00002;
 
-          // if(Math.abs(marauder.lat - server_marauder.lat) < 0.000015 ||
-          //       Math.abs(marauder.lng - server_marauder.lng) < 0.000015) {
-          //   marauder.marker.setLatLng([parseFloat(marauder.lat), parseFloat(marauder.lng)]);
-          // }
+          // Find the distance between our current position and the target (Hazza)
+          var h = Math.pow(a*a + o*o, 0.5) || 0;
+
+          // If h is smaller than j (so we're very close), use h
+          if(h < j) {
+            j = h;
+          }
+
+          // Work out the require lat and lng to take a step in 
+          // the direction of the target (Phillipa & Bob)
+          var p = j * Math.cos(d);
+          var b = j * Math.sin(d);
+
+          // Update the location of this marauder by adding p & b
+          marauder.lat = marauder.lat + p;
+          marauder.lng = marauder.lng + b;
+
+          marauder.marker.setLatLng([marauder.lat, marauder.lng]);
 
         } else {
 
@@ -123,28 +146,32 @@
 
           // Create an icon with their profile url
           var image_url = "https://api.twitter.com/1/users/profile_image?screen_name=" + server_marauder.user_name + "&size=normal"
-          console.log(image_url);
           var image_icon = L.icon({
             iconUrl: image_url,
             iconSize: [24, 24]
           });
           
+          // Set up the new marauder object
           marauder = {
             user_name: server_marauder.user_name,
-            lat: server_marauder.lat,
-            lng: server_marauder.lng,
+            lat: parseFloat(server_marauder.lat),
+            lng: parseFloat(server_marauder.lng),
+            // Create a marker using their picture
             marker: L.marker(
               [parseFloat(server_marauder.lat), parseFloat(server_marauder.lng)],
               { icon: image_icon }
             )
           };
 
+          // And add the marker to the map
           marauder.marker.addTo(map);
 
+          // Bind a popup to the icon which contains their user_name
           marauder.marker.bindPopup(
             marauder.user_name
           );
 
+          // Sore it for later in the marauders array
           marauders[server_marauder.id] = marauder;
 
         }
@@ -153,9 +180,6 @@
 
     });
 
-  }
-
-  function handleNoGeolocation(errorFlag) {
   }
 
 </script>
