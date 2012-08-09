@@ -7,12 +7,34 @@ exports.index = function(req, res){
   if (typeof req.session.oauth_access_token === 'undefined') {
     res.render('index.ejs', { title: "Marauder's App" });
   } else {
-    res.redirect('/to/YRS');
-    // res.render('menu.ejs', { title: "Main menu", user_name: req.session.user_name });
+    res.render('menu.ejs', { title: "Main menu", user_name: req.session.user_name });
   }
 };
 
+exports.newhashtag = function(req, res){
+  if (typeof req.session.oauth_access_token === 'undefined') {
+    res.redirect('/');
+  } else {
+    res.render('new.ejs', { title: "Create a New Hashtag!!!", user_name: req.session.user_name });
+  }
+};
 // Show a map for the requested hashtag
+
+exports.from = function(locations, req, res){
+  if (typeof req.session.oauth_access_token === 'undefined') { res.redirect('/'); return; }
+
+  var hashtag = '#' + req.params.hashtag;
+  if(req.params.hashtag && locations[hashtag]) {
+    res.render('map.ejs', {
+      hashtag: hashtag,
+      title: 'From ' + hashtag,
+      is_from: true
+    });
+  } else {
+    res.redirect('/');
+  }
+};
+
 exports.to = function(locations, req, res) {
   // For now, kick out people who don't have an access token
   if (typeof req.session.oauth_access_token === 'undefined') { res.redirect('/'); return; }
@@ -21,7 +43,8 @@ exports.to = function(locations, req, res) {
   if(req.params.hashtag && locations[hashtag]) {
     res.render('map.ejs', {
       hashtag: hashtag,
-      title: 'To ' + hashtag
+      title: 'To ' + hashtag,
+      is_from: false
     });
   } else {
     res.redirect('/');
@@ -53,11 +76,26 @@ exports.setlocation = function(locations, req, res){
 
   // Check if this hashtag exists
   if (typeof locations[req.body.hashtag] === 'undefined') {
-    // We haven't seen this hashtag before. Shouldn't really ever happen
-    locations[req.body.hashtag] = {
-      target: {},
+    // Save and clean up the hashtag
+    var hashtag = req.body.hashtag.toLowerCase();
+    hashtag = hashtag.replace(/[^a-zA-Z0-9_#]/ig, '');
+    var rawhash = hashtag;
+    if( hashtag.match(/^#/) ) {
+      rawhash = hashtag.slice(1);
+    } else {
+      hashtag = '#' + hashtag;
+    }
+    // We haven't seen this hashtag before, so create it!
+    locations[hashtag] = {
+      target: {
+        lat:req.body.lat,
+        lng:req.body.lng
+      },
       marauders: []
     };
+
+    // Send them to a event page
+    res.redirect('/from/'+rawhash);
   } else {
     // Does the current user have a location_id stored?
     if(req.session.location_id === undefined) {
@@ -81,8 +119,8 @@ exports.setlocation = function(locations, req, res){
         }
       });
     }
+    res.send(200);
   }
-  res.send(200);
 };
 
 // Send a tweet!

@@ -1,0 +1,60 @@
+<div id="content">
+  <h2>Create new hashtag</h2>
+  <p>Drag the marker to the location of your event</p>
+  <div id="map_canvas"></div>
+  <div id="hashtag_container" class="input_container">
+    <form id="newhashtag" method="POST" action="/new">
+      <input type="text" name="hashtag" id="hashtag" placeholder="#YourEvent">
+      <input type="hidden" name="lat" id="lat">
+      <input type="hidden" name="lng" id="lng">
+      <input type="submit" value="Create">
+    </form>
+  </div>
+</div>
+
+<script src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.js"></script>
+<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.1.2"></script>
+
+<script>
+
+  // Initialise the map, geolocation and get other marauders from the db,
+  // only when the page is ready
+  $(function () {
+    // Try HTML5 geolocation
+    if(navigator.geolocation) {
+
+      // Get the user's current position
+      navigator.geolocation.getCurrentPosition(function (position) {
+
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+
+        $('#location').val(JSON.stringify({
+          lat: lat,
+          lng: lng
+        }));
+
+        var map = L.map('map_canvas').setView([lat, lng], 12);
+
+        // Using the stamen toner layer
+        var layer = new L.StamenTileLayer("toner");
+        map.addLayer(layer);
+
+        // Create a marker for the target location
+        var marker = L.marker([lat, lng], {
+          draggable: true
+        }).addTo(map);
+
+        marker.on('dragend', function () {
+          $('#lat').val(marker._latlng.lat);
+          $('#lng').val(marker._latlng.lng);
+        });
+
+      }, function () {})
+      
+    } else {
+      // Browser doesn't support Geolocation
+    }
+  });
+
+</script>

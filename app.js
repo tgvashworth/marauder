@@ -1,10 +1,16 @@
+/**
+ * marauder.me
+ *
+ * I solemnly swear that I am up to no good
+ */
+
 
 /**
  * Module dependencies.
  */
 
-var express = require('express')
-  , routes = require('./routes');
+var express = require('express'),
+    routes = require('./routes');
 
 var app = module.exports = express.createServer();
 var OAuth= require('oauth').OAuth;
@@ -111,12 +117,24 @@ app.get('/auth/logout', function (req, res) {
   res.redirect('/');
 });
 
+app.get('/new', function (req, res){
+ routes.newhashtag(req, res);
+});
+
+app.post('/new', function (req, res){
+  routes.setlocation(locations, req, res);
+});
+
 app.post('/location', function (req, res) {
   routes.setlocation(locations, req, res);
 });
 
 app.get('/location/:hashtag', function (req, res) {
   routes.getlocation(locations, req, res);
+});
+
+app.get('/from/:hashtag', function (req, res) {
+  routes.to(locations, req, res);
 });
 
 app.get('/to/:hashtag', function (req, res) {

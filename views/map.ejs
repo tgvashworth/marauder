@@ -31,7 +31,7 @@
     if(navigator.geolocation) {
       // Send our location to the server and update all the other
       // markers with data from other users
-      updateLocation();
+      updateLocation(<%= is_from %>); updateLocation(true)
     } else {
       // Browser doesn't support Geolocation
     }
@@ -39,30 +39,32 @@
 
   function updateLocation() {
     navigator.geolocation.getCurrentPosition(function(position) {
+
+      // Build and object of my data
+      var my_data = {
+        hashtag: '<%= hashtag %>',
+        lat: ''+position.coords.latitude,
+        lng: ''+position.coords.longitude
+      }
+
+      // Send my location to the server, then add/update all points to the map
+      $.post('/location', my_data, function(response) {
+
+        // Grab the other marauders' data for adding/updating on the map
+        getOtherMarauders(my_data.hashtag);
         
-        // Build and object of my data
-        var my_data = {
-          hashtag: '<%= hashtag %>',
-          lat: ''+position.coords.latitude,
-          lng: ''+position.coords.longitude
-        }
-
-        // Send my location to the server, then add/update all points to the map
-        $.post('/location', my_data, function(response) {
-
-          // Grab the other marauders' data for adding/updating on the map
-          getOtherMarauders('<%= hashtag %>', my_data);
-          
-          // Trigger another update in 2.5 seconds
-          setTimeout(updateLocation, 1000 * 2.5);
-        });
-
-      }, function() {
-        // Geo failed
+        // Trigger another update in 2.5 seconds
+        setTimeout(function () {
+          updateLocation(false);
+        }, 1000 * 2.5);
       });
+
+    }, function() {
+      // Geo failed
+    });
   }
 
-  function getOtherMarauders(hashtag, my_data) {
+  function getOtherMarauders(hashtag) {
 
     var rawtag = '<%= hashtag %>'.slice(1);
 
@@ -125,7 +127,7 @@
           var h = Math.pow(a*a + o*o, 0.5) || 0;
 
           // If h is smaller than j (so we're very close), use h
-          if(h < j) {
+          if(h < j && h > 0.0001) {
             j = h;
           }
 

@@ -5,6 +5,9 @@ body {
   font-family: 'HelveticaNeue', sans-serif;
   color: white;
 }
+a{
+  color: white;
+}
 #container { 
   width: 320px;
   margin : 0 auto;
@@ -12,12 +15,12 @@ body {
   text-align: center;
 }
 
-#speech_wrapper {
+#speech_wrapper, .input_container {
   padding: 1em;
   background: #444;
 }
 
-#speech {
+#speech, input[type="text"] {
   width: 280px;
   font-size: 20px;
   box-shadow: none;

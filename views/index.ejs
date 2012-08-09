@@ -1,13 +1,15 @@
+<head>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+</head>
 <div id="content">
   <div id="speech_wrapper">
     <input id="speech" type="text" x-webkit-speech />
   </div>
 </div>
-
 <script>
   
   (function check() {
-    if( $('#speech').val().match(/I solemnly swear I am up to no good/i) ) {
+    if( $('#speech').val().match(/I solemnly swear (that )?I am up to no good/i) ) {
       document.location.href = window.location.protocol + '//' + window.location.host + '/auth/twitter';
     } else {
       setTimeout(check, 200);
