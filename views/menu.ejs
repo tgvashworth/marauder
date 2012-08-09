@@ -1,10 +1,11 @@
+<%- partial('nav.ejs') %>
 <div id="content">
-  <h2>Hello <%= user_name %></h2>
-  <div id="search_container">
-    <input type="text" id="search">
-    <a href='#' id="do_search">Find</a>
+  <h2>Hello <%= user_name %>!</h2>
+  <p>Enter a hashtag to find your way to the event and see your friends...</p>
+  <div id="search_container" class="input_container">
+    <input type="text" id="search" placeholder="#YRS2012">
+    <input type="submit" id="do_search" value="Go!">
   </div>
-  <a href='/new'>Create New Hashtag!!</a>
 </div>
 
 <script>

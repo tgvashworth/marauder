@@ -24,7 +24,7 @@ exports.to = function(locations, req, res) {
   // For now, kick out people who don't have an access token
   if (typeof req.session.oauth_access_token === 'undefined') { res.redirect('/'); return; }
 
-  var hashtag = '#' + req.params.hashtag;
+  var hashtag = '#' + req.params.hashtag.toLowerCase();
   if(req.params.hashtag && locations[hashtag]) {
     res.render('map.ejs', {
       hashtag: hashtag,
@@ -37,7 +37,7 @@ exports.to = function(locations, req, res) {
 
 // Retrieve locations for the specified hastag (in the query string)
 exports.getlocation = function(locations, req, res){
-  var hashtag = '#' + req.params.hashtag;
+  var hashtag = '#' + req.params.hashtag.toLowerCase();
   if(req.params.hashtag && locations[hashtag]) {
     res.send(JSON.stringify(locations[hashtag]));
   } else {
@@ -59,7 +59,7 @@ exports.setlocation = function(locations, req, res){
   }
 
   // Check if this hashtag exists
-  if (typeof locations[req.body.hashtag] === 'undefined') {
+  if (typeof locations[req.body.hashtag.toLowerCase()] === 'undefined') {
     // Save and clean up the hashtag
     var hashtag = req.body.hashtag.toLowerCase();
     hashtag = hashtag.replace(/[^a-zA-Z0-9_#]/ig, '');

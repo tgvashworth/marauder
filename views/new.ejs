@@ -1,3 +1,5 @@
+<%- partial('nav.ejs') %>
+
 <div id="content">
   <h2>Create new hashtag</h2>
   <p>Drag the marker to the location of your event</p>
@@ -29,11 +31,6 @@
         var lat = position.coords.latitude;
         var lng = position.coords.longitude;
 
-        $('#location').val(JSON.stringify({
-          lat: lat,
-          lng: lng
-        }));
-
         var map = L.map('map_canvas').setView([lat, lng], 12);
 
         // Using the stamen toner layer
@@ -44,6 +41,9 @@
         var marker = L.marker([lat, lng], {
           draggable: true
         }).addTo(map);
+
+        $('#lat').val(marker._latlng.lat);
+        $('#lng').val(marker._latlng.lng);
 
         marker.on('dragend', function () {
           $('#lat').val(marker._latlng.lat);

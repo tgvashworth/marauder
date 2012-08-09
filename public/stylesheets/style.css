@@ -1,18 +1,39 @@
 body {
-  background: black;
+  background: #222;
   margin: 0;
   padding: 0;
   font-family: 'HelveticaNeue', sans-serif;
-  color: white;
+  color: #eee;
 }
 a{
-  color: white;
+  color: #f00;
+}
+
+a:hover {
+  position: relative;
+  top: -1px;
+}
+
+nav {
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #800;
+}
+
+nav a {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0 10px;
 }
 #container { 
   width: 320px;
   margin : 0 auto;
   overflow: hidden; 
   text-align: center;
+}
+
+#container h1 {
+  margin-bottom: 0;
 }
 
 #speech_wrapper, .input_container {
@@ -25,6 +46,21 @@ a{
   font-size: 20px;
   box-shadow: none;
   border: 1px black solid;
+}
+
+input[type="submit"] {
+  margin-top: 0.5em;
+  font-size: 1em;
+  text-transform: uppercase;
+  background: #222;
+  color: red;
+  border: none;
+  font-weight: bold;
+  padding: 0.5em;
+}
+input[type="submit"]:hover {
+  position: relative;
+  top: -1px;
 }
 
 #map_canvas {

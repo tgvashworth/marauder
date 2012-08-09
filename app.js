@@ -36,7 +36,7 @@ var oa = new OAuth(
 // Store the current hashtag locations
 var locations = {};
 
-locations['#YRS'] = {
+locations['#yrs'] = {
   target: {
     lat: '52.4831056',
     lng: '-1.8859758'
