@@ -68,7 +68,7 @@ app.configure('production', function(){
 // Routes
 app.get('/', routes.index);
 
-app.get('/tweet', function(req, res) {
+app.get('/tweet/:hashtag', function(req, res) {
   // Pass oa to routes.tweet so that
   // we can send stuff to the Twitter API
   routes.tweet(oa, req, res);

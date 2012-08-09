@@ -109,13 +109,12 @@ exports.setlocation = function(locations, req, res){
 
 // Send a tweet!
 exports.tweet = function(oa, req, res){
-  return;
   if (typeof req.session.oauth_access_token === 'undefined') {
     res.redirect('/');
   } else {
 
     var body = {
-      status: 'Look how good we are - this is our first auto tweet with Node! #YRS2012'
+      status: 'Check out this even on marauder.me! http://marauder.me/to/' + req.params.hashtag + ' #' + req.params.hashtag + ' #YRS2012'
     };
 
     var endpoint = "http://api.twitter.com/1/statuses/update.json";

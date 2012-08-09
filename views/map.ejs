@@ -1,5 +1,5 @@
 <%- partial('nav.ejs') %>
-
+<p><a href="/tweet" id="tweet">Tweet about this event!</a></p>
 <div id="map_canvas"></div>
 
 <div id="speech_wrapper">
@@ -83,6 +83,8 @@
 
       // Initialisation stuff
       if( ! initialised ) {
+
+        $('#tweet').attr('href', $('#tweet').attr('href') + '/' + rawtag);
 
         // Set up the map
         map = L.map('map_canvas').setView([data.target.lat, data.target.lng], 18);
