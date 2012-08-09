@@ -42,10 +42,16 @@ nav a {
 }
 
 #speech, input[type="text"] {
-  width: 280px;
+  padding: 0;
+  width: 270px;
   font-size: 20px;
   box-shadow: none;
   border: 1px black solid;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 0, 0,1);
 }
 
 input[type="submit"] {
