@@ -49,6 +49,11 @@ nav a {
   border: 1px black solid;
 }
 
+#skip {
+  padding-top: 0.5em;
+  display: block;
+}
+
 input:focus {
   outline: none;
   box-shadow: 0 0 5px rgba(255, 0, 0,1);
