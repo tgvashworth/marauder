@@ -114,7 +114,7 @@ exports.tweet = function(oa, req, res){
   } else {
 
     var body = {
-      status: 'Check out this even on marauder.me! http://marauder.me/to/' + req.params.hashtag + ' #' + req.params.hashtag + ' #YRS2012'
+      status: 'Check out this event on marauder.me! http://marauder.me/to/' + req.params.hashtag + ' #' + req.params.hashtag + ' #YRS2012'
     };
 
     var endpoint = "http://api.twitter.com/1/statuses/update.json";
