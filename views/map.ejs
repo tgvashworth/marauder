@@ -4,7 +4,7 @@
 
 <div id="speech_wrapper">
   <input id="speech" type="text" x-webkit-speech placeholder="Logout..." />
-  <a id="skip" href="/auth/twitter">or click here...</a>
+  <a id="skip" href="/auth/logout">or click here...</a>
 </div>
 
 <script>
@@ -58,7 +58,7 @@
         
         // Trigger another update in 2.5 seconds
         setTimeout(function () {
-          updateLocation(false);
+          updateLocation();
         }, 1000 * 2.5);
       });
 
@@ -77,10 +77,6 @@
       // Turn data in to a usable Javascript object
       data = JSON.parse(data);
       
-      // // Add markers for each of the other Marauders
-      // var blue_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png");
-      // var green_icon = new google.maps.MarkerImage("http://www.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png");
-
       // Initialisation stuff
       if( ! initialised ) {
 
@@ -106,6 +102,7 @@
 
       }
 
+      // Update or create marauders based on the server info
       data.marauders.forEach(function (server_marauder) {
 
         var marauder;
